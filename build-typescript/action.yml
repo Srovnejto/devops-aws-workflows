@@ -1,0 +1,21 @@
+name: "Build TypeScript"
+description: "Build TypeScript"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install all NPM packages, including DevDependencies
+      shell: bash
+      run: npm install
+
+    - name: Compile TypeScript
+      shell: bash
+      run: tsc
+
+    - name: Delete folder node_modules
+      shell: bash
+      run: rm -r node_modules
+
+    - name: Install production NPM packages
+      shell: bash
+      run: npm install --only=prod

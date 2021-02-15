@@ -1,0 +1,31 @@
+name: "Setup AWS credentials"
+description: "Setup AWS credentials"
+inputs:
+  AWS_ENVIRONMENT:
+    description: "AWS environment  / UAT / PROD"
+    required: true
+  AWS_REGION:
+    description: "AWS region identifier"
+    required: true
+  DEV_AWS_ACCESS_KEY_ID:
+    description: AWS access key for DEV account
+    required: true
+  DEV_AWS_SECRET_ACCESS_KEY:
+    description: AWS secret key for DEV account
+    required: true
+  UAT_AWS_ACCESS_KEY_ID:
+    description: AWS access key for UAT account
+    required: true
+  UAT_AWS_SECRET_ACCESS_KEY:
+    description: AWS secret key for UAT account
+    required: true
+  PROD_AWS_ACCESS_KEY_ID:
+    description: AWS access key for PROD account
+    required: true
+  PROD_AWS_SECRET_ACCESS_KEY:
+    description: AWS secret key for PROD account
+    required: true
+
+runs:
+  using: "node12"
+  main: "index.js"

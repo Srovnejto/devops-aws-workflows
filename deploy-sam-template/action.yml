@@ -1,0 +1,59 @@
+name: "Deploy SAM template"
+description: "Deploy SAM template"
+inputs:
+  STACK_NAME:
+    description: "CloudFormation stack name"
+    required: true
+  TEMPLATE_FILE:
+    description: "Value of --template-file parametere of sam build command"
+    required: false 
+    default: "aws-deploy/template.yml"
+  BASE_DIR:
+    description: "Value of --base-dir parametere of sam build command"
+    required: false 
+    default: "./src"
+  BENDER_TOKEN:
+    description: "Token used to add Nuget repository source"
+    required: true 
+  PARAMETER_OVERRIDES_DEV:
+    description: "Parameters override for DEV environment"
+    required: false
+    default: ""
+  PARAMETER_OVERRIDES_UAT:
+    description: "Parameters override for UAT environment"
+    required: false
+    default: ""
+  PARAMETER_OVERRIDES_PROD:
+    description: "Parameters override for PROD environment"
+    required: false
+    default: ""
+  TAGS_DEV:
+    description: "CloudFormation tags for DEV environment"
+    required: false
+    default: ""
+  TAGS_UAT:
+    description: "CloudFormation tags for UAT environment"
+    required: false
+    default: ""
+  TAGS_PROD:
+    description: "CloudFormation tags for PROD environment"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add Srovnejto NuGet source
+      shell: bash
+      run: dotnet nuget add source -u "srt-bender" -p "${{ inputs.BENDER_TOKEN }}" -n "Srovnejto-GitHub" "https://nuget.pkg.github.com/Srovnejto/index.json" --store-password-in-clear-text
+
+    - name: Build SAM template
+      shell: bash
+      run: sam build --template-file ${{ inputs.TEMPLATE_FILE }} --base-dir ${{ inputs.BASE_DIR }}
+
+    - shell: bash
+      run: |
+        [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_DEV }}; $TAGS=${{ inputs.TAGS_DEV }}; }
+        [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_UAT }}; $TAGS=${{ inputs.TAGS_UAT }}; }
+        [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_PROD }}; $TAGS=${{ inputs.TAGS_PROD }}; }
+        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags ${{ inputs.TAGS }} --parameter-overrides ${{ inputs.PARAMETER_OVERRIDES }}
