@@ -59,20 +59,20 @@ runs:
     - shell: bash
       run: |
         if [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] ; then
-          $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_DEV }}"
-          $TAGS="${{ inputs.TAGS_DEV }}"
+          PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_DEV }}"
+          TAGS="${{ inputs.TAGS_DEV }}"
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] ; then
-          $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_UAT }}"
-          $TAGS="${{ inputs.TAGS_UAT }}"
+          PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_UAT }}"
+          TAGS="${{ inputs.TAGS_UAT }}"
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] ; then
-          $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_PROD }}"
-          $TAGS="${{ inputs.TAGS_PROD }}"
+          PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_PROD }}"
+          TAGS="${{ inputs.TAGS_PROD }}"
         fi
 
-        echo 'Deploy parameters: --parameter-overrides=' $PARAMETER_OVERRIDES ' --tags=' $TAGS
-        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "${{ inputs.TAGS }}" --parameter-overrides "${{ inputs.PARAMETER_OVERRIDES }}"
+        echo "Deploy parameters: --parameter-overrides=$PARAMETER_OVERRIDES --tags=$TAGS"
+        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES"
         echo "SAM template deployed successfully."
