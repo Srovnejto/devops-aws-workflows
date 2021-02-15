@@ -10,6 +10,7 @@ cloudFormation.describeStacks({ StackName: STACK_NAME }, (error, data) => {
     } else {
         data.Stacks[0].Outputs.forEach(output => {
             //core.exportVariable(STACK_NAME + "." + output.OutputKey, output.OutputValue);
+            console.log(output.OutputKey + " = " + output.OutputValue);
             core.setOutput(output.OutputKey, output.OutputValue);
         })
     }
