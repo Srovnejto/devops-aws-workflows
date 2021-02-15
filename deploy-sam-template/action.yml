@@ -45,11 +45,16 @@ runs:
   steps:
     - name: Add Srovnejto NuGet source
       shell: bash
-      run: dotnet nuget add source -u "srt-bender" -p "${{ inputs.BENDER_TOKEN }}" -n "Srovnejto-GitHub" "https://nuget.pkg.github.com/Srovnejto/index.json" --store-password-in-clear-text
+      run: |
+        dotnet nuget add source -u "srt-bender" -p "${{ inputs.BENDER_TOKEN }}" -n "Srovnejto-GitHub" "https://nuget.pkg.github.com/Srovnejto/index.json" --store-password-in-clear-text
+        echo "Nuget package store added successfully."
 
     - name: Build SAM template
       shell: bash
-      run: sam build --template-file ${{ inputs.TEMPLATE_FILE }} --base-dir ${{ inputs.BASE_DIR }}
+      run: |
+        sam build --template-file ${{ inputs.TEMPLATE_FILE }} --base-dir ${{ inputs.BASE_DIR }}
+        echo "SAM template built successfully."
+
 
     - shell: bash
       run: |
@@ -57,3 +62,4 @@ runs:
         [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] && { $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_UAT }}"; $TAGS="${{ inputs.TAGS_UAT }}"; }
         [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] && { $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_PROD }}"; $TAGS="${{ inputs.TAGS_PROD }}"; }
         sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "${{ inputs.TAGS }}" --parameter-overrides "${{ inputs.PARAMETER_OVERRIDES }}"
+        echo "SAM template deployed successfully."
