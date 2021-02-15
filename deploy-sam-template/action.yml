@@ -4,6 +4,10 @@ inputs:
   STACK_NAME:
     description: "CloudFormation stack name"
     required: true
+  S3_BUCKET:
+    description: Name of S3 bucket, which will store source code
+    required: false
+    default: lambda-source-codes-ahcnywhidys
   TEMPLATE_FILE:
     description: "Value of --template-file parametere of sam build command"
     required: false 
@@ -74,5 +78,5 @@ runs:
         fi
 
         echo "Deploy parameters: --parameter-overrides=$PARAMETER_OVERRIDES --tags=$TAGS"
-        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES"
+        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES" --s3-bucket ${{ inputs.S3_BUCKET }} --s3-prefix ${{ inputs.S3_BUCKET }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
         echo "SAM template deployed successfully."
