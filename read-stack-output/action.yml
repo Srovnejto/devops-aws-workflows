@@ -1,0 +1,10 @@
+name: "Read Cloudformation stack output"
+description: "Read Cloudformation stack output"
+inputs:
+  STACK_NAME:
+    description: "CloudFormation stack name"
+    required: true
+
+runs:
+  using: "node12"
+  main: "index.js"

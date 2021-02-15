@@ -1,0 +1,12 @@
+{
+  "name": "ReadStackOutput",
+  "version": "1.0.0",
+  "description": "Read cloudFormation stack output",
+  "main": "index.js",
+  "author": "Srovnejto",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "aws-sdk": "^2.843.0"
+  }
+}
