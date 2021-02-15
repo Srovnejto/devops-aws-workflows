@@ -15,4 +15,5 @@ runs:
       shell: bash
       run: |
         echo ${{ github.event.inputs.ENVIRONMENT_VARIABLES }} > options.json
+        echo "aws elasticbeanstalk update-environment --environment-name ${{ github.event.inputs.ENVIRONMENT_NAME }} --option-settings file://options.json"
         aws elasticbeanstalk update-environment --environment-name ${{ github.event.inputs.ENVIRONMENT_NAME }} --option-settings file://options.json
