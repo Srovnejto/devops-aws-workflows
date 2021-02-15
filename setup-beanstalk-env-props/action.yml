@@ -1,0 +1,18 @@
+name: "Waits for Elastic beansTalk environment is ready"
+description: "Waits for Elastic beansTalk environment is ready"
+inputs:
+  ENVIRONMENT_NAME:
+    description: "Elastic BeansTalk environment name"
+    required: true
+  ENVIRONMENT_VARIABLES:
+    description: "JSON with new environment variable settings"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Wait for Elastic beansTalk environment is ready
+      shell: bash
+      run: |
+        echo ${{ github.event.inputs.ENVIRONMENT_VARIABLES }} > options.json
+        aws elasticbeanstalk update-environment --environment-name ${{ github.event.inputs.ENVIRONMENT_NAME }} --option-settings file://options.json
