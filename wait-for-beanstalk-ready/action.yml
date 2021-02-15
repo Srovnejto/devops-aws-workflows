@@ -1,0 +1,19 @@
+name: "Waits for Elastic beansTalk environment is ready"
+description: "Waits for Elastic beansTalk environment is ready"
+inputs:
+  ENVIRONMENT_NAME:
+    description: "Elastic BeansTalk environment name"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Wait for Elastic beansTalk environment is ready
+      shell: bash
+      run: |
+        while : ; do
+          STATUS=$(aws elasticbeanstalk  describe-environment-health --environment-name ${{ github.event.inputs.ENVIRONMENT_NAME }} --attribute-names Status | jq -r '.Status')
+          echo Current status: "$STATUS"
+          [[ $STATUS == 'Ready' ]] && break
+          sleep 2
+        done
