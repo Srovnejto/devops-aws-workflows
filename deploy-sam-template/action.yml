@@ -53,7 +53,7 @@ runs:
 
     - shell: bash
       run: |
-        [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_DEV }}; $TAGS=${{ inputs.TAGS_DEV }}; }
-        [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_UAT }}; $TAGS=${{ inputs.TAGS_UAT }}; }
-        [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] && { $PARAMETER_OVERRIDES=${{ inputs.PARAMETER_OVERRIDES_PROD }}; $TAGS=${{ inputs.TAGS_PROD }}; }
-        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags ${{ inputs.TAGS }} --parameter-overrides ${{ inputs.PARAMETER_OVERRIDES }}
+        [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] && { $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_DEV }}"; $TAGS="${{ inputs.TAGS_DEV }}"; }
+        [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] && { $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_UAT }}"; $TAGS="${{ inputs.TAGS_UAT }}"; }
+        [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] && { $PARAMETER_OVERRIDES="${{ inputs.PARAMETER_OVERRIDES_PROD }}"; $TAGS="${{ inputs.TAGS_PROD }}"; }
+        sam deploy --config-file aws-deploy/samconfig.toml --config-env ${{ env.AWS_ENVIRONMENT }} --stack-name ${{ inputs.STACK_NAME }} --tags "${{ inputs.TAGS }}" --parameter-overrides "${{ inputs.PARAMETER_OVERRIDES }}"
