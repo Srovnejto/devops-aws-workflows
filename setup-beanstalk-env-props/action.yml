@@ -14,5 +14,5 @@ runs:
     - name: Wait for Elastic beansTalk environment is ready
       shell: bash
       run: |
-        echo ${{ github.event.inputs.ENVIRONMENT_VARIABLES }} > options.json
-        aws elasticbeanstalk update-environment --environment-name "${{ github.event.inputs.ENVIRONMENT_NAME }}" --option-settings file://options.json
+        echo ${{ inputs.ENVIRONMENT_VARIABLES }} > options.json
+        aws elasticbeanstalk update-environment --environment-name ${{ inputs.ENVIRONMENT_NAME }} --option-settings file://options.json

@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: |
         while : ; do
-          STATUS=$(aws elasticbeanstalk  describe-environment-health --environment-name ${{ github.event.inputs.ENVIRONMENT_NAME }} --attribute-names Status | jq -r '.Status')
+          STATUS=$(aws elasticbeanstalk  describe-environment-health --environment-name ${{ inputs.ENVIRONMENT_NAME }} --attribute-names Status | jq -r '.Status')
           echo Current status: "$STATUS"
           [[ $STATUS == 'Ready' ]] && break
           sleep 2
