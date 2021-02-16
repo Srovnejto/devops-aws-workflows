@@ -63,18 +63,18 @@ runs:
     - shell: bash
       run: |
         if [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] ; then
-          PARAMETER_OVERRIDES="_none=0 ${{ inputs.PARAMETER_OVERRIDES_DEV }}"
-          TAGS=" ${{ inputs.TAGS_DEV }}"
+          PARAMETER_OVERRIDES="env=dev ${{ inputs.PARAMETER_OVERRIDES_DEV }}"
+          TAGS="env=dev ${{ inputs.TAGS_DEV }}"
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] ; then
-          PARAMETER_OVERRIDES="_none=0 ${{ inputs.PARAMETER_OVERRIDES_UAT }}"
-          TAGS=" ${{ inputs.TAGS_UAT }}"
+          PARAMETER_OVERRIDES="env=uat ${{ inputs.PARAMETER_OVERRIDES_UAT }}"
+          TAGS="env=uat ${{ inputs.TAGS_UAT }}"
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] ; then
-          PARAMETER_OVERRIDES="_none=0 ${{ inputs.PARAMETER_OVERRIDES_PROD }}"
-          TAGS=" ${{ inputs.TAGS_PROD }}"
+          PARAMETER_OVERRIDES="env=prod ${{ inputs.PARAMETER_OVERRIDES_PROD }}"
+          TAGS="env=prod ${{ inputs.TAGS_PROD }}"
         fi
 
         echo "Deploy parameters: --parameter-overrides=$PARAMETER_OVERRIDES --tags=$TAGS"
