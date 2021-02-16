@@ -13,4 +13,4 @@ runs:
   steps:
     - name: Wait for Elastic beansTalk environment is ready
       shell: bash
-      run: aws elasticbeanstalk update-environment --environment-name ${{ inputs.ENVIRONMENT_NAME }} --option-settings ${{ inputs.ENVIRONMENT_VARIABLES }}
+      run: aws elasticbeanstalk update-environment --environment-name '${{ inputs.ENVIRONMENT_NAME }}' --option-settings ${{ inputs.ENVIRONMENT_VARIABLES }}
