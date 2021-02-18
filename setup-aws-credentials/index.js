@@ -29,9 +29,11 @@ try {
     core.exportVariable('AWS_ENVIRONMENT', AWS_ENVIRONMENT);
 
     console.log("AWS_ACCESS_KEY_ID: " + AWS_ACCESS_KEY_ID);
+    core.setSecret(AWS_ACCESS_KEY_ID);
     core.exportVariable('AWS_ACCESS_KEY_ID', AWS_ACCESS_KEY_ID);
 
     console.log("AWS_SECRET_ACCESS_KEY: " + AWS_SECRET_ACCESS_KEY);
+    core.setSecret(AWS_SECRET_ACCESS_KEY);
     core.exportVariable('AWS_SECRET_ACCESS_KEY', AWS_SECRET_ACCESS_KEY);
 
     console.log("AWS_REGION: " + AWS_REGION);
