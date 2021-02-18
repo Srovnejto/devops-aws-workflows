@@ -62,19 +62,24 @@ runs:
 
     - shell: bash
       run: |
+        echo AWS_ENVIRONMENT=${{ env.AWS_ENVIRONMENT }}
+
         if [ "${{ env.AWS_ENVIRONMENT }}" = "DEV" ] ; then
           PARAMETER_OVERRIDES="env=dev ${{ inputs.PARAMETER_OVERRIDES_DEV }}"
           TAGS="env=dev ${{ inputs.TAGS_DEV }}"
+          echo Using DEV parameters.
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "UAT" ] ; then
           PARAMETER_OVERRIDES="env=uat ${{ inputs.PARAMETER_OVERRIDES_UAT }}"
           TAGS="env=uat ${{ inputs.TAGS_UAT }}"
+          echo Using UAT parameters.
         fi
 
         if [ "${{ env.AWS_ENVIRONMENT }}" = "PROD" ] ; then
           PARAMETER_OVERRIDES="env=prod ${{ inputs.PARAMETER_OVERRIDES_PROD }}"
           TAGS="env=prod ${{ inputs.TAGS_PROD }}"
+          echo Using PROD parameters.
         fi
 
         echo "Deploy parameters: --stack-name ${{ inputs.STACK_NAME }} --tags $TAGS --parameter-overrides $PARAMETER_OVERRIDES --s3-bucket ${{ inputs.S3_BUCKET }} --s3-prefix ${{ inputs.S3_BUCKET }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset"
