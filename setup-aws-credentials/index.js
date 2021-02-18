@@ -1,4 +1,5 @@
 const core = require("@actions/core");
+const aws = require('aws-sdk');
 
 try {
     let AWS_ENVIRONMENT = core.getInput('AWS_ENVIRONMENT');
@@ -26,20 +27,52 @@ try {
     }
 
     console.log("AWS_ENVIRONMENT: " + AWS_ENVIRONMENT);
-    core.exportVariable('AWS_ENVIRONMENT', AWS_ENVIRONMENT);
-
     console.log("AWS_ACCESS_KEY_ID: " + AWS_ACCESS_KEY_ID);
-    core.setSecret(AWS_ACCESS_KEY_ID);
-    core.exportVariable('AWS_ACCESS_KEY_ID', AWS_ACCESS_KEY_ID);
-
     console.log("AWS_SECRET_ACCESS_KEY: " + AWS_SECRET_ACCESS_KEY);
-    core.setSecret(AWS_SECRET_ACCESS_KEY);
-    core.exportVariable('AWS_SECRET_ACCESS_KEY', AWS_SECRET_ACCESS_KEY);
-
     console.log("AWS_REGION: " + AWS_REGION);
-    core.exportVariable('AWS_DEFAULT_REGION', AWS_REGION);
-    core.exportVariable('AWS_REGION', AWS_REGION);
+
+    core.setSecret(accessKeyId);
+    core.exportVariable('AWS_ACCESS_KEY_ID', accessKeyId);
+    core.setSecret(secretAccessKey);
+    core.exportVariable('AWS_SECRET_ACCESS_KEY', secretAccessKey);
+    core.exportVariable('AWS_DEFAULT_REGION', region);
+    core.exportVariable('AWS_REGION', region);
+
+    await validateCredentials(AWS_ACCESS_KEY_ID);
 } catch (error) {
     console.log("error: ", error);
     core.setFailed(error.message);
+}
+
+
+function loadCredentials() {
+    aws.config.credentials = null;
+
+    return new Promise((resolve, reject) => {
+        aws.config.getCredentials((err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(aws.config.credentials);
+        })
+    });
+}
+
+async function validateCredentials(expectedAccessKeyId) {
+    let credentials;
+    try {
+        credentials = await loadCredentials();
+
+        if (!credentials.accessKeyId) {
+            throw new Error('Access key ID empty after loading credentials');
+        }
+    } catch (error) {
+        throw new Error(`Credentials could not be loaded, please check your action inputs: ${error.message}`);
+    }
+
+    const actualAccessKeyId = credentials.accessKeyId;
+
+    if (expectedAccessKeyId && expectedAccessKeyId != actualAccessKeyId) {
+        throw new Error('Unexpected failure: Credentials loaded by the SDK do not match the access key ID configured by the action');
+    }
 }
