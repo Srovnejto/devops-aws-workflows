@@ -7,10 +7,6 @@ inputs:
   AWS_ENVIRONMENT:
     description: "CloudFormation stack name"
     required: true
-  S3_BUCKET:
-    description: Name of S3 bucket, which will store source code
-    required: false
-    default: lambda-source-codes-ahcnywhidys
   TEMPLATE_FILE:
     description: "Value of --template-file parametere of sam build command"
     required: false 
@@ -70,21 +66,24 @@ runs:
         if [ "${{ inputs.AWS_ENVIRONMENT }}" = "DEV" ] ; then
           PARAMETER_OVERRIDES="env=dev ${{ inputs.PARAMETER_OVERRIDES_DEV }}"
           TAGS="env=dev ${{ inputs.TAGS_DEV }}"
+          S3_BUCKET=lambda-source-codes-ahcnywhidys
           echo Using DEV parameters.
         fi
 
         if [ "${{ inputs.AWS_ENVIRONMENT }}" = "UAT" ] ; then
           PARAMETER_OVERRIDES="env=uat ${{ inputs.PARAMETER_OVERRIDES_UAT }}"
           TAGS="env=uat ${{ inputs.TAGS_UAT }}"
+          S3_BUCKET=lambda-source-codes-uatxxdflkad
           echo Using UAT parameters.
         fi
 
         if [ "${{ inputs.AWS_ENVIRONMENT }}" = "PROD" ] ; then
           PARAMETER_OVERRIDES="env=prod ${{ inputs.PARAMETER_OVERRIDES_PROD }}"
           TAGS="env=prod ${{ inputs.TAGS_PROD }}"
+          S3_BUCKET=lambda-source-codes-jlkasdflkad
           echo Using PROD parameters.
         fi
 
-        echo "Deploy parameters: --stack-name ${{ inputs.STACK_NAME }} --tags $TAGS --parameter-overrides $PARAMETER_OVERRIDES --s3-bucket ${{ inputs.S3_BUCKET }} --s3-prefix ${{ inputs.S3_BUCKET }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset"
-        sam deploy --config-file aws-deploy/samconfig.toml --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES" --s3-bucket ${{ inputs.S3_BUCKET }} --s3-prefix ${{ inputs.S3_BUCKET }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
+        echo "Deploy parameters: --stack-name ${{ inputs.STACK_NAME }} --tags $TAGS --parameter-overrides $PARAMETER_OVERRIDES --s3-bucket $S3_BUCKET --s3-prefix ${{ inputs.STACK_NAME }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset"
+        sam deploy --config-file aws-deploy/samconfig.toml --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES" --s3-bucket $S3_BUCKET --s3-prefix ${{ inputs.STACK_NAME }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
         echo "SAM template deployed successfully."
