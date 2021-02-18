@@ -4,6 +4,9 @@ inputs:
   STACK_NAME:
     description: "CloudFormation stack name"
     required: true
+  AWS_ENVIRONMENT:
+    description: "CloudFormation stack name"
+    required: true
   S3_BUCKET:
     description: Name of S3 bucket, which will store source code
     required: false
