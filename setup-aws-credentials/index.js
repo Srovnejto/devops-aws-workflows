@@ -32,12 +32,12 @@ async function run() {
         console.log("AWS_SECRET_ACCESS_KEY: " + AWS_SECRET_ACCESS_KEY);
         console.log("AWS_REGION: " + AWS_REGION);
 
-        core.setSecret(accessKeyId);
-        core.exportVariable('AWS_ACCESS_KEY_ID', accessKeyId);
-        core.setSecret(secretAccessKey);
-        core.exportVariable('AWS_SECRET_ACCESS_KEY', secretAccessKey);
-        core.exportVariable('AWS_DEFAULT_REGION', region);
-        core.exportVariable('AWS_REGION', region);
+        core.setSecret(AWS_ACCESS_KEY_ID);
+        core.exportVariable('AWS_ACCESS_KEY_ID', AWS_ACCESS_KEY_ID);
+        core.setSecret(AWS_SECRET_ACCESS_KEY);
+        core.exportVariable('AWS_SECRET_ACCESS_KEY', AWS_SECRET_ACCESS_KEY);
+        core.exportVariable('AWS_DEFAULT_REGION', AWS_REGION);
+        core.exportVariable('AWS_REGION', AWS_REGION);
 
         await validateCredentials(AWS_ACCESS_KEY_ID);
     } catch (error) {
