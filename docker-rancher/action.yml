@@ -50,4 +50,4 @@ runs:
       run: |
         echo "Invoking Rancher redeploy"
         URL="${{ inputs.RANCHER_URL }}:${{ inputs.RANCHER_WORKLOAD }}?action=redeploy"
-        curl -X POST -H "Authorization: ${{ secrets.RANCHER_ACCESS_TOKEN }}" -H "Accept: application/json" -H "Content-Type: application/json" $URL
+        curl -X POST -H "Authorization: ${{ inputs.RANCHER_ACCESS_TOKEN }}" -H "Accept: application/json" -H "Content-Type: application/json" $URL
