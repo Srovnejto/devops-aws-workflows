@@ -1,0 +1,53 @@
+name: "Build docker image and invoke Rancher redeploy"
+description: "Build docker image and invoke Rancher redeploy"
+inputs:
+  RANCHER_URL:
+    description: "Rancher API URL, used to redeploy image"
+    required: true
+  RANCHER_WORKLOAD:
+    description: "Docker image version. Options: DEV/UAT/PREVIEW"
+    required: true
+  RANCHER_ACCESS_TOKEN:
+    description: "Rancher access token"
+    required: true
+  DOCKER_IMAGE_NAME:
+    description: "Name of docker image"
+    required: true
+  DOCKER_VERSION_TAG:
+    description: "Docker image version. Options: DEV/UAT/PREVIEW"
+    required: true
+  DOCKER_ACCESS_TOKEN:
+    description: "Name of docker image"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log into GitHub Container Registry
+      shell: bash
+      run: echo "${{ inputs.DOCKER_ACCESS_TOKEN  }}" | docker login https://ghcr.io --username srt-bender --password-stdin
+
+    - name: Build Docker image
+      shell: bash
+      run: docker build --pull --tag ${{ inputs.DOCKER_IMAGE_NAME }}:$GITHUB_SHA --file Dockerfile .
+
+    - name: Push image to GitHub Container Registry
+      shell: bash
+      run: |
+        IMAGE_ID=ghcr.io/${{ github.repository_owner }}/${{ inputs.DOCKER_IMAGE_NAME }}
+
+        # Change all uppercase to lowercase
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+        VERSION=$(echo ${{ inputs.DOCKER_VERSION_TAG }} | tr '[A-Z]' '[a-z]')
+
+        echo IMAGE_ID=$IMAGE_ID
+        echo VERSION=$VERSION
+        docker tag ${{ inputs.DOCKER_IMAGE_NAME }}:$GITHUB_SHA $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
+
+    - name: Invoke Rancher redeploy
+      shell: bash
+      run: |
+        echo "Invoking Rancher redeploy"
+        URL="${{ inputs.RANCHER_URL }}:${{ inputs.RANCHER_WORKLOAD }}?action=redeploy"
+        curl -X POST -H "Authorization: ${{ secrets.RANCHER_ACCESS_TOKEN }}" -H "Accept: application/json" -H "Content-Type: application/json" $URL
