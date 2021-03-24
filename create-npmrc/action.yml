@@ -1,0 +1,18 @@
+name: "Create .npmrc file"
+description: "Create .npmrc file"
+inputs:
+  FONT_AWESOME_TOKEN:
+    description: "Fontawesome authorization token"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create .npmrc file
+      shell: bash
+      run: |
+        echo 'Creating .npmrc file. Please review the following link for more information: https://docs.github.com/en/free-pro-team@latest/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages#authenticating-to-github-packages'
+        {
+          echo "@fortawesome:registry=https://npm.fontawesome.com/"
+          echo "//npm.fontawesome.com/:_authToken=${{ inputs.FONT_AWESOME_TOKEN }}"
+        } >> .npmrc
