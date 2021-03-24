@@ -16,8 +16,11 @@ inputs:
   DOCKER_VERSION_TAG:
     description: "Docker image version. Options: DEV/UAT/PREVIEW"
     required: true
+  DOCKER_USER:
+    description: "User name for docker login"
+    required: true
   DOCKER_ACCESS_TOKEN:
-    description: "Name of docker image"
+    description: "User's token for docker login"
     required: true
 
 runs:
@@ -25,7 +28,7 @@ runs:
   steps:
     - name: Log into GitHub Container Registry
       shell: bash
-      run: echo "${{ inputs.DOCKER_ACCESS_TOKEN  }}" | docker login https://ghcr.io --username srt-bender --password-stdin
+      run: echo "${{ inputs.DOCKER_ACCESS_TOKEN  }}" | docker login https://ghcr.io --username ${{ inputs.DOCKER_USER  }} --password-stdin
 
     - name: Build Docker image
       shell: bash
