@@ -1,0 +1,22 @@
+name: "Invoke Rancher redeploy"
+description: "Invoke Rancher redeploy"
+inputs:
+  RANCHER_URL:
+    description: "Rancher API URL, used to redeploy image"
+    required: true
+  RANCHER_WORKLOAD:
+    description: "Workload id"
+    required: true
+  RANCHER_BEARER_TOKEN:
+    description: "Rancher bearer token"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Invoke Rancher redeploy
+      shell: bash
+      run: |
+        echo "Invoking Rancher redeploy"
+        URL="${{ inputs.RANCHER_URL }}:${{ inputs.RANCHER_WORKLOAD }}?action=redeploy"
+        curl -X POST -H "Authorization: ${{ inputs.RANCHER_BEARER_TOKEN }}" -H "Accept: application/json" -H "Content-Type: application/json" $URL
