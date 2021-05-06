@@ -14,6 +14,10 @@ inputs:
     description: "Value of docker build --file parameter."
     required: false
     default: "Dockerfile"
+  DOCKER_FOLDER:
+    description: "Root directory for docker build"
+    required: false
+    default: "."
   DOCKER_IMAGE_NAME:
     description: "Name of docker image"
     required: true
@@ -49,7 +53,7 @@ runs:
         echo VERSION=$VERSION
 
         # build, tag and push docker image
-        docker build --pull --tag $IMAGE_ID:$GITHUB_SHA --file ${{ inputs.DOCKER_FILE }} .
+        docker build --pull --tag $IMAGE_ID:$GITHUB_SHA --file ${{ inputs.DOCKER_FILE }} ${{ inputs.DOCKER_FOLDER }} 
         docker tag $IMAGE_ID:$GITHUB_SHA $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
