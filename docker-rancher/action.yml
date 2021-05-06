@@ -10,6 +10,10 @@ inputs:
   RANCHER_ACCESS_TOKEN:
     description: "Rancher access token"
     required: true
+  DOCKER_FILE:
+    description: "Value of docker build --file parameter."
+    required: false
+    default: "Dockerfile"
   DOCKER_IMAGE_NAME:
     description: "Name of docker image"
     required: true
@@ -30,22 +34,23 @@ runs:
       shell: bash
       run: echo "${{ inputs.DOCKER_ACCESS_TOKEN  }}" | docker login https://ghcr.io --username ${{ inputs.DOCKER_USER  }} --password-stdin
 
-    - name: Build Docker image
-      shell: bash
-      run: docker build --pull --tag ${{ inputs.DOCKER_IMAGE_NAME }}:$GITHUB_SHA --file Dockerfile .
-
-    - name: Push image to GitHub Container Registry
+    - name: Build and push docker image to GitHub Container Registry
       shell: bash
       run: |
+        # Compose ImageID
         IMAGE_ID=ghcr.io/${{ github.repository_owner }}/${{ inputs.DOCKER_IMAGE_NAME }}
 
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         VERSION=$(echo ${{ inputs.DOCKER_VERSION_TAG }} | tr '[A-Z]' '[a-z]')
 
+        # ImageID and Version console output
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
-        docker tag ${{ inputs.DOCKER_IMAGE_NAME }}:$GITHUB_SHA $IMAGE_ID:$VERSION
+
+        # build, tag and push docker image
+        docker build --pull --tag $IMAGE_ID:$GITHUB_SHA --file ${{ inputs.DOCKER_FILE }} .
+        docker tag $IMAGE_ID:$GITHUB_SHA $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
 
     - name: Invoke Rancher redeploy
