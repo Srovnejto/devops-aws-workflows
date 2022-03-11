@@ -1,1 +1,90 @@
+name: testAPI
 
+on:
+#   push:
+#     branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test-api-CSOB-UAT:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # INstall Node on the runner
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      # Install the newman command line utility and also install the html extra reporter
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+      # Make directory to upload the test results
+      - name: Make Directory for results
+        run: mkdir -p testResults
+
+      # Run the POSTMAN collection
+      - name: Run POSTMAN collection
+        run: |
+          echo "Start waiting for 1 min"
+          sleep 3
+          echo "Finished waiting and runing the PM collection"
+          newman run https://www.getpostman.com/collections/04bc3d5f35108d5652e0 -r htmlextra --reporter-htmlextra-export testResults/testReportAdapterCSOB.html
+      
+      # Email notification
+      - name: Send mail
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # Required mail server address:
+          server_address: smtp.email.cz
+          # Required mail server port:
+          server_port: 465
+          # Optional (recommended): mail server username:
+          username: ${{ secrets.EMAIL_USERNAME }}
+          # Optional (recommended) mail server password:
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          # Required mail subject:
+          subject: ${{ github.job }} job of ${{ github.repository }} has status ${{ job.status }}
+                   
+          # Required recipient's addresses - comma-separated string
+          to: igor.ponomarov@srovnejto.cz
+          # Required sender full name:
+          from: Srovnejto QA team
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+          # optional email body as text
+          body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has status "${{ job.status }}"
+          # Optional HTML body read from file:
+#           html_body: file://testResults/testReportAdapterCSOB.html
+          # Optional carbon copy recipients:
+          #cc: xxx@srovnejto.cz,xxx@srovnejto.cz
+          # Optional blind carbon copy recipients:
+          #bcc: x@srovnejto.cz,x@srovnejto.cz
+          # Optional recipient of the email response:
+          #reply_to: xxx@srovnejto.cz
+          # Optional Message ID this message is replying to:
+          #in_reply_to: <xxx@srovnejto.cz>
+          # Optional unsigned/invalid certificates allowance:
+          ignore_cert: true
+          # Optional converting Markdown to HTML (set content_type to text/html too):
+          convert_markdown: true
+          # Optional attachments:
+          attachments: testResults/testReportAdapterCSOB.html
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          priority: normal
+
+      # Upload the contents of Test Results directory to workspace
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
+        with:
+          name: RunReports
+          path: testResults
