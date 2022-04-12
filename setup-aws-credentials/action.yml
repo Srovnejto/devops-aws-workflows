@@ -25,6 +25,12 @@ inputs:
   PROD_AWS_SECRET_ACCESS_KEY:
     description: AWS secret key for PROD account
     required: true
+  ROOT_AWS_ACCESS_KEY_ID:
+    description: AWS access key for ROOT account
+    required: true
+  ROOT_AWS_SECRET_ACCESS_KEY:
+    description: AWS secret key for ROOT account
+    required: true
 
 runs:
   using: "node12"
