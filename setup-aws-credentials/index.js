@@ -24,6 +24,11 @@ async function run() {
                 AWS_SECRET_ACCESS_KEY = core.getInput("PROD_AWS_SECRET_ACCESS_KEY");
                 break;
             }
+            case "ROOT": {
+                AWS_ACCESS_KEY_ID = core.getInput("ROOT_AWS_ACCESS_KEY_ID");
+                AWS_SECRET_ACCESS_KEY = core.getInput("ROOT_AWS_SECRET_ACCESS_KEY");
+                break;
+            }
             default: throw "Unknown environment '" + AWS_ENVIRONMENT + "'.";
         }
 
