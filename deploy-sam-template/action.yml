@@ -30,6 +30,10 @@ inputs:
     description: "Parameters override for PROD environment"
     required: false
     default: ""
+  PARAMETER_OVERRIDES_ROOT:
+    description: "Parameters override for ROOT environment"
+    required: false
+    default: ""
   TAGS_DEV:
     description: "CloudFormation tags for DEV environment"
     required: false
@@ -40,6 +44,10 @@ inputs:
     default: ""
   TAGS_PROD:
     description: "CloudFormation tags for PROD environment"
+    required: false
+    default: ""
+  TAGS_ROOT:
+    description: "CloudFormation tags for ROOT environment"
     required: false
     default: ""
 
@@ -82,6 +90,13 @@ runs:
           TAGS="env=prod ${{ inputs.TAGS_PROD }}"
           S3_BUCKET=lambda-source-codes-jlkasdflkad
           echo Using PROD parameters.
+        fi
+
+        if [ "${{ inputs.AWS_ENVIRONMENT }}" = "ROOT" ] ; then
+          PARAMETER_OVERRIDES="env=root ${{ inputs.PARAMETER_OVERRIDES_ROOT }}"
+          TAGS="env=root ${{ inputs.TAGS_ROOT }}"
+          S3_BUCKET=lambda-source-codes-sdfscxvdf
+          echo Using ROOT parameters.
         fi
 
         echo "Deploy parameters: --stack-name ${{ inputs.STACK_NAME }} --tags $TAGS --parameter-overrides $PARAMETER_OVERRIDES --s3-bucket $S3_BUCKET --s3-prefix ${{ inputs.STACK_NAME }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset"
