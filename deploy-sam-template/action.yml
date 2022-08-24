@@ -99,6 +99,11 @@ runs:
           echo Using ROOT parameters.
         fi
 
+        if [ ! -s aws-deploy/samconfig.toml ]; then
+          mkdir aws-deploy 2>/dev/null || true
+          echo "version = 0.1" > aws-deploy/samconfig.toml
+        fi
+
         echo "Deploy parameters: --stack-name ${{ inputs.STACK_NAME }} --tags $TAGS --parameter-overrides $PARAMETER_OVERRIDES --s3-bucket $S3_BUCKET --s3-prefix ${{ inputs.STACK_NAME }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset"
         sam deploy --config-file aws-deploy/samconfig.toml --stack-name ${{ inputs.STACK_NAME }} --tags "$TAGS" --parameter-overrides "$PARAMETER_OVERRIDES" --s3-bucket $S3_BUCKET --s3-prefix ${{ inputs.STACK_NAME }} --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
         echo "SAM template deployed successfully."
